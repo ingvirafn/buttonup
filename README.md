@@ -1,1 +1,3 @@
-# papi 
+# ButtonUp
+
+Simple angularJS app with localStorage 
