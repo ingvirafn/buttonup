@@ -21,22 +21,17 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.get('/buttons/list', function(req,res) {
-	res.json([{label:'Open door', action: {verb:'POST', url:'http://www.mbl.is/',body:'shizzle',headers:[]} }]);
-});
-
-
 // Statics
 app.use(express.static('public'));
 
 
 // ELSE!
-// app.use(function(req, res, next){
-// 	res.writeHead(302, {
-// 	  'Location': '/'
-// 	});
-// 	res.end();
-// });
+app.use(function(req, res, next){
+	res.writeHead(302, {
+	  'Location': '/'
+	});
+	res.end();
+});
 
 server = app.listen(SERVERPORT, function() {
   debug('Express server listening on port ' + server.address().port);
