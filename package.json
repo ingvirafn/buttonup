@@ -1,0 +1,26 @@
+{
+  "name": "ButtonUp",
+  "version": "0.1.0",
+  "private": true,
+  "author": {
+    "name": "Ingvi Rafn Guðmundsson",
+    "email": "ingvirafn@ingvirafn.com"
+  },
+  "description": "ButtonUp",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ingvirafn/buttonup.git"
+  },
+  "contributors": [],
+  "dependencies": {
+    "express": "4.12.4",
+    "cheerio": "~0.19.0",
+    "fs":"",
+    "request": "~2.57.0",
+    "debug": "~2.2.0",
+    "cookie-parser": "1.3.5",
+    "body-parser": "1.13.2",
+    "node-persist": "",
+    "pubnub": ""
+  }
+}

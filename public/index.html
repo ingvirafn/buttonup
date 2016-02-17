@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Button up</title>
+
+    <!-- Bootstrap -->  
+      <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+
+  </head>
+  <body ng-app="buttonUpApp">
+    <div class="container-fluid">
+    <h1 class="center">Button up!</h1>
+    <div ng-controller="mainCtrl">
+      <button type="button" class="btn btn-warning btn-block" ng-click="setEditMode();">Edit mode</button>      
+      <hr/>
+      <div ng-repeat="btn in buttons track by $index">
+        <button type="button" class="btn btn-default btn-block" ng-click="$parent.action(btn)">{{btn.label}}</button>
+        <div ng-show="$parent.editMode">
+          <form>
+            <div class="form-group">
+              <label for="exampleInputEmail1">Button label</label>
+              <input type="text" class="form-control" placeholder="Button label" ng-model="btn.label">
+            </div>
+            
+            <div class="form-group">
+              <label for="exampleInputEmail1">http action</label>
+              <select class="form-control" ng-model="btn.action">
+                <option value="GET">HTTP GET</option>
+                <option value="POST">HTTP POST</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="exampleInputEmail1">Url</label>
+              <input type="text" class="form-control" placeholder="url" ng-model="btn.url">
+            </div>
+            <div class="form-group" ng-show="btn.action == 'POST'">
+              <label >body</label>
+              <input type="text" class="form-control" placeholder="json body" ng-model="btn.body">
+            </div>
+            <div class="form-group">
+              <label>result transformation</label>
+              <input type="text" class="form-control" placeholder="js format" ng-model="btn.format">
+            </div>
+          </form>
+          <button ng-click="$parent.buttons.splice($index,1)" class="btn btn-warning" >Remove</button>
+        </div>
+        <hr/>
+      </div>
+      <button ng-show="editMode" type="button" class="btn btn-primary btn-block" ng-click="buttons.push({'label':'BUTTON'})">New button</button>      
+      <div ng-show="result != ''">
+        <pre>
+          {{result}}
+        </pre>
+      </div>      
+      </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+    <script>
+  angular.module('buttonUpApp', [])
+  .controller('mainCtrl', function($scope,$http) {
+    
+    $scope.action = function(btn) {
+      var req = {
+        method: btn.action,
+        url: btn.url,
+      };
+      
+      if (btn.action == "POST")
+      {
+        req.data = btn.body;
+        req.contentType = 'application/json'
+
+      }
+      
+      $http(req).then(function successCallback(response) {
+          // this callback will be called asynchronously
+          // when the response is available
+          $scope.result = function(x) { 
+            var result = '';
+            try {
+              result = eval(btn.format);               
+            }
+            catch (err) {
+              result = 'Error: '+err;
+            }
+            return result;
+            }(response.data);
+          
+        }, function errorCallback(response) {
+          // called asynchronously if an error occurs
+          // or server returns response with an error status.
+          $scope.result = "Error: " + response.data;
+        });
+      
+    };
+    $scope.setEditMode = function() {
+      if ($scope.editMode) {
+        localStorage.setItem('buttonUpData', angular.toJson($scope.buttons));
+      }
+      $scope.editMode = !$scope.editMode;
+    };
+
+    $scope.buttons = [];
+    
+    var btnUpData = localStorage.getItem('buttonUpData');
+    if (btnUpData) {
+       $scope.buttons = JSON.parse(btnUpData);
+    }
+    
+    $scope.editMode = false;
+ 
+    // $http({
+    //   method: 'GET',
+    //   url: '/buttons/list'
+    // }).then(function successCallback(response) {
+    //     // this callback will be called asynchronously
+    //     // when the response is available
+    //     $scope.buttons = response.data;
+    //     
+    //   }, function errorCallback(response) {
+    //     // called asynchronously if an error occurs
+    //     // or server returns response with an error status.
+    //     alert('shiz');
+    //   });
+
+    
+  }); 
+
+    </script>
+    
+  </body>
+
+
+</html>
